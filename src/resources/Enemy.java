@@ -5,7 +5,7 @@ import org.joml.Vector2f;
 import engine.StaticSprite;
 
 public class Enemy extends StaticSprite {
-	private float mSpeed = 0.1f;
+	private float mSpeed = 0.14f;
 	private int mHealth=10;
 	private boolean mAlive=true;
 	private Player mPlayer;
