@@ -116,20 +116,17 @@ public class GameApplication extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		GameApplication game = new GameApplication("Game Window", 1024, 768);
+		GameApplication game = new GameApplication("*Untitled - EngineX", 1024, 768);
 		Player player = new Player(game, 0);
 		player.setX(400);
 		player.setY(300);
 		
 		TextObject healthDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
 		TextObject scoreDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
-		TextObject enemyDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
 		healthDisplay.setY(60);
 		scoreDisplay.setY(500);
-		enemyDisplay.setY(250);
 		game.spawnGameObject(healthDisplay);
 		game.spawnGameObject(scoreDisplay);
-		game.spawnGameObject(enemyDisplay);
 		
 		game.spawnGameObject(player);
 		game.addKeyListener(player);
@@ -142,6 +139,9 @@ public class GameApplication extends JFrame {
 			enemy.setY((int) (Math.random() * 500));
 			game.spawnGameObject(enemy);
 		}
+		
+		AnimatedSprite explosion = new AnimatedSprite("res/explosion.gif", 50);
+		game.spawnGameObject(explosion);
 		
 		long t = System.currentTimeMillis();
 		while (game.isRunning()) {
