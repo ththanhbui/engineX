@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import org.joml.Vector2f;
 
+import resources.Barrel;
 import resources.Bullet;
 import resources.Enemy;
 import resources.Player;
@@ -140,8 +141,12 @@ public class GameApplication extends JFrame {
 			game.spawnGameObject(enemy);
 		}
 		
-		AnimatedSprite explosion = new AnimatedSprite("res/explosion.gif", 50);
-		game.spawnGameObject(explosion);
+		for (int i = 0; i < 5; i++) {
+			Barrel barrel = new Barrel();
+			barrel.setX((int) (Math.random() * 500));
+			barrel.setY((int) (Math.random() * 500));
+			game.spawnGameObject(barrel);
+		}
 		
 		long t = System.currentTimeMillis();
 		while (game.isRunning()) {
@@ -152,15 +157,42 @@ public class GameApplication extends JFrame {
 			healthDisplay.setString("Health: " + player.getHealth());
 			scoreDisplay.setString("Score: " + player.getScore());
 			
-			for(GameObject bullet : game.getGameObjects()) if (bullet instanceof Bullet) {
-				for (GameObject g : game.getGameObjects()) if (g instanceof Enemy) {
-					Enemy enemy = (Enemy) g;
-					Vector2f bulletPosition = new Vector2f(bullet.getX(), bullet.getY());
-					Vector2f enemyPosition = new Vector2f(enemy.getX(), enemy.getY());
-					Vector2f direction = bulletPosition.sub(enemyPosition);
-					if (direction.length()<Math.sqrt(Math.pow(((Enemy) enemy).getWidth(),2) + Math.pow(((Enemy) enemy).getHeight(),2))) {
-						game.removeGameObject(bullet);
-						if (enemy.getColour() == ((Bullet) bullet).getColour()) enemy.decrementHealth(5);
+			for (GameObject bullet : game.getGameObjects()) if (bullet instanceof Bullet) {
+				for (GameObject g : game.getGameObjects()) { 
+					if (g instanceof Enemy) {
+						Enemy enemy = (Enemy) g;
+						Vector2f bulletPosition = new Vector2f(bullet.getX(), bullet.getY());
+						Vector2f enemyPosition = new Vector2f(enemy.getX(), enemy.getY());
+						Vector2f direction = bulletPosition.sub(enemyPosition);
+						if (direction.length()<Math.sqrt(Math.pow(enemy.getWidth(), 2) + Math.pow(enemy.getHeight(), 2))) {
+							game.removeGameObject(bullet);
+							if (enemy.getColour() == ((Bullet) bullet).getColour()) enemy.decrementHealth(5);
+						}
+					} else if (g instanceof Barrel) {
+						Barrel barrel = (Barrel)g;
+						Vector2f bulletPosition = new Vector2f(bullet.getX(), bullet.getY());
+						Vector2f barrelPosition = new Vector2f(barrel.getX(), barrel.getY());
+						Vector2f direction = bulletPosition.sub(barrelPosition);
+						if (direction.length()<Math.sqrt(Math.pow(barrel.getWidth(), 2) + Math.pow(barrel.getHeight(),2))) {
+							game.removeGameObject(bullet);
+							game.removeGameObject(barrel);
+							AnimatedSprite explosion = new AnimatedSprite("res/explosion.gif", 50);
+							explosion.setLoop(false);
+							explosion.setX(barrel.getX());
+							explosion.setY(barrel.getY());
+							game.spawnGameObject(explosion);
+							
+							for (GameObject e : game.getGameObjects()) { 
+								if (e instanceof Enemy) {
+									Enemy enemy = (Enemy) e;
+									Vector2f enemyPosition = new Vector2f(enemy.getX(), enemy.getY());
+									Vector2f direction2 = enemyPosition.sub(barrelPosition);
+									if (direction2.length()<1000) {
+										enemy.decrementHealth(10);
+									}
+								}
+							}
+						}
 					}
 				}
 			}

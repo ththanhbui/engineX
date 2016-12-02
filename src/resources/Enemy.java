@@ -87,7 +87,7 @@ public class Enemy extends GameObject {
 	
 	private void playerHit() {
 		Vector2f direction = getDirection();
-		if (direction.length()<Math.sqrt(Math.pow(mPlayer.getWidth(),2) + Math.pow(mPlayer.getHeight(),2)))
+		if (direction.length()<Math.sqrt(Math.pow(getWidth(),2) + Math.pow(getHeight(),2)))
 			mPlayer.decrementHealth(1);
 	}
 	
