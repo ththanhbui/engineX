@@ -18,11 +18,40 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 	private float mDirection = 0.0f;
 	private boolean[] mArrowKeys;
 	private GameApplication mGameApplication;
+	private int mHealth=100;
+	private boolean mAlive=true;
+	private int mScore = 0;
+	
+	public int getHealth() {
+		return mHealth;
+	}
+	
+	private long lastDecrement = 0;
+	
+	public void decrementHealth(int x) {
+		if (System.currentTimeMillis() - lastDecrement < 20) return;
+		lastDecrement = System.currentTimeMillis();
+		if (mHealth<x) mAlive=false;
+		else mHealth-=x;
+	}
+	
+	public void incrementHealth(int x){
+		if (mHealth-100<x) mHealth=100;
+		else mHealth+=x;
+	}
 	
 	public Player(GameApplication gameApplication) {
 		super("res/player.png");
 		mArrowKeys = new boolean [4];
 		mGameApplication = gameApplication;
+	}
+	
+	public void increaseScore() {
+		mScore++;
+	}
+	
+	public int getScore() {
+		return mScore;
 	}
 	
 	@Override
@@ -36,13 +65,14 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 		deltaY *= Math.round((float) deltaTime * mSpeed);
 		setX(getX() + deltaX);
 		setY(getY() + deltaY);
+		if (!mAlive) System.exit(0);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
 		transform.translate(getX(), getY());
-		transform.rotate(mDirection, getImage().getWidth() / 2.0, getImage().getHeight() / 2.0);
+		transform.rotate(mDirection, getWidth() / 2.0, getHeight() / 2.0);
 		g.drawImage(getImage(), transform, null);
 	}
 
@@ -96,7 +126,7 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 	}
 	
 	private void mouseMoveImpl(int x, int y) {
-		Vector2f difference = new Vector2f(x, y).sub(new Vector2f(getX(), getY())).normalize();
+		Vector2f difference = new Vector2f(x, y).sub(new Vector2f(getX() + getWidth()/2, getY() + getHeight()/2)).normalize();
 		mDirection = (float) Math.acos(difference.dot(new Vector2f(0.0f, -1.0f)));
 		if (difference.x < 0.0f) mDirection = -mDirection;
 	}

@@ -2,10 +2,15 @@ package engine;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.joml.Vector2f;
+
+import resources.Bullet;
+import resources.Enemy;
 import resources.Player;
 
 /**
@@ -117,10 +122,27 @@ public class GameApplication extends JFrame {
 		player.setX(400);
 		player.setY(300);
 		
+		TextObject healthDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
+		TextObject scoreDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
+		TextObject enemyDisplay = new TextObject("", new Font("Comic Sans MS", Font.PLAIN, 30), Color.BLACK);
+		healthDisplay.setY(60);
+		scoreDisplay.setY(500);
+		enemyDisplay.setY(250);
+		game.spawnGameObject(healthDisplay);
+		game.spawnGameObject(scoreDisplay);
+		game.spawnGameObject(enemyDisplay);
+		
 		game.spawnGameObject(player);
 		game.addKeyListener(player);
 		game.addMouseMotionListener(player);
 		game.addMouseListener(player);
+		
+		for (int i = 0; i < 20; i++) {
+			Enemy enemy = new Enemy(player);
+			enemy.setX((int) (Math.random() * 500));
+			enemy.setY((int) (Math.random() * 500));
+			game.spawnGameObject(enemy);
+		}
 		
 		long t = System.currentTimeMillis();
 		while (game.isRunning()) {
@@ -128,6 +150,21 @@ public class GameApplication extends JFrame {
 			t = System.currentTimeMillis();
 			
 			game.update(deltaTime);
+			healthDisplay.setString("Health: " + player.getHealth());
+			scoreDisplay.setString("Score: " + player.getScore());
+			
+			for(GameObject bullet : game.getGameObjects()) if (bullet instanceof Bullet) {
+				for (GameObject g : game.getGameObjects()) if (g instanceof Enemy) {
+					Enemy enemy = (Enemy) g;
+					Vector2f bulletPosition = new Vector2f(bullet.getX(), bullet.getY());
+					Vector2f enemyPosition = new Vector2f(enemy.getX(), enemy.getY());
+					Vector2f direction = bulletPosition.sub(enemyPosition);
+					if (direction.length()<Math.sqrt(Math.pow(((Bullet) bullet).getWidth(),2) + Math.pow(((Bullet) bullet).getHeight(),2))) {
+						enemy.decrementHealth(5);
+					}
+				}
+			}
+			
 			game.render();
 		}
 	}

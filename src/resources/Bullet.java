@@ -3,7 +3,7 @@ package resources;
 import engine.StaticSprite;
 
 public class Bullet extends StaticSprite {
-	private float mSpeed = 1.0f;
+	private float mSpeed = 0.25f;
 	private float mDirection;
 	
 	public Bullet(float direction) {
