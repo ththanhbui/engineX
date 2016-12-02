@@ -37,7 +37,7 @@ public class Player extends GameObject implements KeyListener, MouseMotionListen
 	private long lastDecrement = 0;
 	
 	public void decrementHealth(int x) {
-		if (System.currentTimeMillis() - lastDecrement < 20) return;
+		if (System.currentTimeMillis() - lastDecrement < 50) return;
 		lastDecrement = System.currentTimeMillis();
 		if (mHealth<x) mAlive=false;
 		else mHealth-=x;
@@ -81,6 +81,10 @@ public class Player extends GameObject implements KeyListener, MouseMotionListen
 		return mImages[0].getHeight();
 	}
 	
+	public int getColor() {
+		return mColour;
+	}
+	
 	@Override
 	public void update(int deltaTime) {
 		int deltaX = 0, deltaY = 0;
@@ -117,6 +121,12 @@ public class Player extends GameObject implements KeyListener, MouseMotionListen
 			break;
 		case KeyEvent.VK_D:
 			mArrowKeys[3] = true;
+			break;
+		case KeyEvent.VK_1:
+		case KeyEvent.VK_2:
+		case KeyEvent.VK_3:
+		case KeyEvent.VK_4:
+			mColour = e.getKeyCode() - KeyEvent.VK_1;
 			break;
 		}
 	}
@@ -169,7 +179,7 @@ public class Player extends GameObject implements KeyListener, MouseMotionListen
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Bullet bullet = new Bullet(mDirection);
+		Bullet bullet = new Bullet(mDirection, mColour);
 		bullet.setX(getX() + getWidth()/2 - bullet.getWidth()/2);
 		bullet.setY(getY() + getHeight()/2 - bullet.getHeight()/2);
 		mGameApplication.spawnGameObject(bullet);

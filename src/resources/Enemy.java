@@ -20,6 +20,14 @@ public class Enemy extends GameObject {
 	private boolean mAlive = true;
 	private Player mPlayer;
 	
+	public int getWidth() {
+		return mImages[0].getWidth();
+	}
+	
+	public int getHeight() {
+		return mImages[0].getHeight();
+	}
+	
 	public Enemy(Player player, int colour) {
 		mPlayer = player;
 		mColour = colour;
@@ -46,7 +54,7 @@ public class Enemy extends GameObject {
 		return direction;
 	}
 	
-	public int getColor() {
+	public int getColour() {
 		return mColour;
 	}
 	

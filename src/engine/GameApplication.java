@@ -2,7 +2,6 @@ package engine;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -138,7 +137,7 @@ public class GameApplication extends JFrame {
 		game.addMouseListener(player);
 		
 		for (int i = 0; i < 20; i++) {
-			Enemy enemy = new Enemy(player, 0);
+			Enemy enemy = new Enemy(player, (int) (Math.random() * 4));
 			enemy.setX((int) (Math.random() * 500));
 			enemy.setY((int) (Math.random() * 500));
 			game.spawnGameObject(enemy);
@@ -159,8 +158,9 @@ public class GameApplication extends JFrame {
 					Vector2f bulletPosition = new Vector2f(bullet.getX(), bullet.getY());
 					Vector2f enemyPosition = new Vector2f(enemy.getX(), enemy.getY());
 					Vector2f direction = bulletPosition.sub(enemyPosition);
-					if (direction.length()<Math.sqrt(Math.pow(((Bullet) bullet).getWidth(),2) + Math.pow(((Bullet) bullet).getHeight(),2))) {
-						enemy.decrementHealth(5);
+					if (direction.length()<Math.sqrt(Math.pow(((Enemy) enemy).getWidth(),2) + Math.pow(((Enemy) enemy).getHeight(),2))) {
+						game.removeGameObject(bullet);
+						if (enemy.getColour() == ((Bullet) bullet).getColour()) enemy.decrementHealth(5);
 					}
 				}
 			}
