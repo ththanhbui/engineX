@@ -1,18 +1,38 @@
 package resources;
 
 import java.awt.Graphics2D;
-import org.joml.Vector2f;
-import engine.StaticSprite;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class Enemy extends StaticSprite {
+import javax.imageio.ImageIO;
+
+import org.joml.Vector2f;
+
+import engine.GameObject;
+
+public class Enemy extends GameObject {
+	private BufferedImage[] mImages;
+	private int mColour;				// 0 - red, 1 - green, 2 - blue, 3 - yellow
+	
 	private float mSpeed = 0.14f;
-	private int mHealth=10;
-	private boolean mAlive=true;
+	private int mHealth = 10;
+	private boolean mAlive = true;
 	private Player mPlayer;
 	
-	public Enemy(Player player) {
-		super("res/enemy.png");
+	public Enemy(Player player, int colour) {
 		mPlayer = player;
+		mColour = colour;
+		
+		mImages = new BufferedImage [4];
+		try {
+			mImages[0] = ImageIO.read(new File("res/enemy_red.png"));
+			mImages[1] = ImageIO.read(new File("res/enemy_green.png"));
+			mImages[2] = ImageIO.read(new File("res/enemy_blue.png"));
+			mImages[3] = ImageIO.read(new File("res/enemy_yellow.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int getHealth() {
@@ -24,6 +44,10 @@ public class Enemy extends StaticSprite {
 		Vector2f enemyPosition = new Vector2f(getX(), getY());
 		Vector2f direction = playerPosition.sub(enemyPosition);
 		return direction;
+	}
+	
+	public int getColor() {
+		return mColour;
 	}
 	
 	@Override
@@ -50,7 +74,7 @@ public class Enemy extends StaticSprite {
 	
 	@Override
 	public void render(Graphics2D g) {
-		g.drawImage(getImage(), getX(), getY(), null);
+		g.drawImage(mImages[mColour], getX(), getY(), null);
 	}
 	
 	private void playerHit() {

@@ -7,19 +7,27 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.joml.Vector2f;
 
 import engine.GameApplication;
-import engine.StaticSprite;
+import engine.GameObject;
 
-public class Player extends StaticSprite implements KeyListener, MouseMotionListener, MouseListener {
+public class Player extends GameObject implements KeyListener, MouseMotionListener, MouseListener {
+	private BufferedImage[] mImages;
+	private int mColour;
+	
 	private float mSpeed = 0.3f;
 	private float mDirection = 0.0f;
 	private boolean[] mArrowKeys;
 	private GameApplication mGameApplication;
-	private int mHealth=100;
-	private boolean mAlive=true;
+	private int mHealth = 100;
+	private boolean mAlive = true;
 	private int mScore = 0;
 	
 	public int getHealth() {
@@ -40,8 +48,19 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 		else mHealth+=x;
 	}
 	
-	public Player(GameApplication gameApplication) {
-		super("res/player.png");
+	public Player(GameApplication gameApplication, int colour) {
+		mImages = new BufferedImage [4];
+		
+		try {
+			mImages[0] = ImageIO.read(new File("res/player_red.png"));
+			mImages[1] = ImageIO.read(new File("res/player_green.png"));
+			mImages[2] = ImageIO.read(new File("res/player_blue.png"));
+			mImages[3] = ImageIO.read(new File("res/player_yellow.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		mColour = colour;
 		mArrowKeys = new boolean [4];
 		mGameApplication = gameApplication;
 	}
@@ -52,6 +71,14 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 	
 	public int getScore() {
 		return mScore;
+	}
+	
+	public int getWidth() {
+		return mImages[0].getWidth();
+	}
+	
+	public int getHeight() {
+		return mImages[0].getHeight();
 	}
 	
 	@Override
@@ -73,7 +100,7 @@ public class Player extends StaticSprite implements KeyListener, MouseMotionList
 		AffineTransform transform = new AffineTransform();
 		transform.translate(getX(), getY());
 		transform.rotate(mDirection, getWidth() / 2.0, getHeight() / 2.0);
-		g.drawImage(getImage(), transform, null);
+		g.drawImage(mImages[mColour], transform, null);
 	}
 
 	@Override

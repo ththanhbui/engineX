@@ -117,8 +117,8 @@ public class GameApplication extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		GameApplication game = new GameApplication("Game Window", 800, 600);
-		Player player = new Player(game);
+		GameApplication game = new GameApplication("Game Window", 1024, 768);
+		Player player = new Player(game, 0);
 		player.setX(400);
 		player.setY(300);
 		
@@ -138,7 +138,7 @@ public class GameApplication extends JFrame {
 		game.addMouseListener(player);
 		
 		for (int i = 0; i < 20; i++) {
-			Enemy enemy = new Enemy(player);
+			Enemy enemy = new Enemy(player, 0);
 			enemy.setX((int) (Math.random() * 500));
 			enemy.setY((int) (Math.random() * 500));
 			game.spawnGameObject(enemy);
