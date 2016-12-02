@@ -1,0 +1,125 @@
+package resources;
+
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+
+import org.joml.Vector2f;
+
+import engine.GameApplication;
+import engine.StaticSprite;
+
+public class Player extends StaticSprite implements KeyListener, MouseMotionListener, MouseListener {
+	private float mSpeed = 0.3f;
+	private float mDirection = 0.0f;
+	private boolean[] mArrowKeys;
+	private GameApplication mGameApplication;
+	
+	public Player(GameApplication gameApplication) {
+		super("res/player.png");
+		mArrowKeys = new boolean [4];
+		mGameApplication = gameApplication;
+	}
+	
+	@Override
+	public void update(int deltaTime) {
+		int deltaX = 0, deltaY = 0;
+		if (mArrowKeys[0]) deltaY = -1;
+		if (mArrowKeys[1]) deltaX = -1;
+		if (mArrowKeys[2]) deltaY = 1;
+		if (mArrowKeys[3]) deltaX = 1;
+		deltaX *= Math.round((float) deltaTime * mSpeed);
+		deltaY *= Math.round((float) deltaTime * mSpeed);
+		setX(getX() + deltaX);
+		setY(getY() + deltaY);
+	}
+
+	@Override
+	public void render(Graphics2D g) {
+		AffineTransform transform = new AffineTransform();
+		transform.translate(getX(), getY());
+		transform.rotate(mDirection, getImage().getWidth() / 2.0, getImage().getHeight() / 2.0);
+		g.drawImage(getImage(), transform, null);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_W:
+			mArrowKeys[0] = true;
+			break;
+		case KeyEvent.VK_A:
+			mArrowKeys[1] = true;
+			break;
+		case KeyEvent.VK_S:
+			mArrowKeys[2] = true;
+			break;
+		case KeyEvent.VK_D:
+			mArrowKeys[3] = true;
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_W:
+			mArrowKeys[0] = false;
+			break;
+		case KeyEvent.VK_A:
+			mArrowKeys[1] = false;
+			break;
+		case KeyEvent.VK_S:
+			mArrowKeys[2] = false;
+			break;
+		case KeyEvent.VK_D:
+			mArrowKeys[3] = false;
+			break;
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		mouseMoveImpl(e.getX(), e.getY());
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouseMoveImpl(e.getX(), e.getY());
+	}
+	
+	private void mouseMoveImpl(int x, int y) {
+		Vector2f difference = new Vector2f(x, y).sub(new Vector2f(getX(), getY())).normalize();
+		mDirection = (float) Math.acos(difference.dot(new Vector2f(0.0f, -1.0f)));
+		if (difference.x < 0.0f) mDirection = -mDirection;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		Bullet bullet = new Bullet(mDirection);
+		bullet.setX(getX() + getWidth()/2 - bullet.getWidth()/2);
+		bullet.setY(getY() + getHeight()/2 - bullet.getHeight()/2);
+		mGameApplication.spawnGameObject(bullet);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+}
