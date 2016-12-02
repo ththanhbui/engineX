@@ -149,6 +149,7 @@ public class GameApplication extends JFrame {
 		}
 		
 		long t = System.currentTimeMillis();
+		long lastBarrel = System.currentTimeMillis();
 		while (game.isRunning()) {
 			int deltaTime = (int) (System.currentTimeMillis() - t);
 			t = System.currentTimeMillis();
@@ -156,6 +157,15 @@ public class GameApplication extends JFrame {
 			game.update(deltaTime);
 			healthDisplay.setString("Health: " + player.getHealth());
 			scoreDisplay.setString("Score: " + player.getScore());
+			
+			if (System.currentTimeMillis() - lastBarrel > 10000L){
+				Barrel barrel = new Barrel();
+				barrel.setX((int) (Math.random() * 800));
+				barrel.setY((int) (Math.random() * 800));
+				game.spawnGameObject(barrel);
+				System.out.println(System.currentTimeMillis() - lastBarrel);
+				lastBarrel = System.currentTimeMillis();
+			}
 			
 			for (GameObject bullet : game.getGameObjects()) if (bullet instanceof Bullet) {
 				for (GameObject g : game.getGameObjects()) { 
