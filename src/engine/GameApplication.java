@@ -117,7 +117,7 @@ public class GameApplication extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		GameApplication game = new GameApplication("*Untitled - EngineX", 1024, 768);
+		GameApplication game = new GameApplication("Tank - Engine X", 1024, 768);
 		Player player = new Player(game, 0);
 		player.setX(400);
 		player.setY(300);
